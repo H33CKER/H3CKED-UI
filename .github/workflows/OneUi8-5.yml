@@ -20,6 +20,9 @@ jobs:
     - name: Checkout repository
       uses: actions/checkout@v6
 
+    - name: Cleaning junk files
+      uses: rokibhasansagar/slimhub_actions@v25.42.5
+
     - name: Install required packages
       run: |
         sudo apt install -y \
@@ -29,9 +32,6 @@ jobs:
 
         chmod +x bin/erofs-utils/extract.erofs
         chmod +x bin/erofs-utils/mkfs.erofs
-
-    - name: Cleaning junk files
-      uses: rokibhasansagar/slimhub_actions@v25.42.5
 
     - name: Setup directories
       run: |
