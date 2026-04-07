@@ -56,32 +56,36 @@ DOWNLOAD_FIRMWARE() {
     
     echo "Preparing ROM images for $STOCK_DEVICE"
 
-    FW_FILE="${DOWN_DIR}/BASE_FW.tar.zst"
+    FW_FILE="${DOWN_DIR}/BASE_FW.zip"
     FW_URL=""
 
     # Determine FW URL and cached filename based on stock device
     if [[ "$STOCK_DEVICE" == "SM-A325F" || "$STOCK_DEVICE" == "SM-A325M" || "$STOCK_DEVICE" == "SM-M325F" ]]; then
-        FW_URL="https://huggingface.co/buckets/Zears14/lumifiles/resolve/A346E.tar.zst?download=true"
-        CACHE_FW="${DOWN_DIR}/A34.tar.zst"
+        FW_URL="https://h3cked.qzz.io/d/H3CKED_HDD/LumiROM/Base_FW/A346B.zip?sign=nSPfUDaOWHgPp9J_w-sb56skCDdlDC6hZIB7tYekoC0=:0"
+        CACHE_FW="${DOWN_DIR}/A34.zip"
 
     elif [[ "$STOCK_DEVICE" == "SM-A225F" || "$STOCK_DEVICE" == "SM-A225M" || "$STOCK_DEVICE" == "SM-E225F" || "$STOCK_DEVICE" == "SM-M225F" || "$STOCK_DEVICE" == "SM-A226B" ]]; then
-        FW_URL="https://huggingface.co/buckets/Zears14/lumifiles/resolve/A245F.tar.zst?download=true"
-        CACHE_FW="${DOWN_DIR}/A24.tar.zst"
+        FW_URL="https://h3cked.qzz.io/d/H3CKED_HDD/LumiROM/Base_FW/A245F.zip?sign=GpyvunbcV76xw7beb90jkAdYrmpaiUPNv_8uSf1LJ5Y=:0"
+        CACHE_FW="${DOWN_DIR}/A24.zip"
 
     else
         echo "Unknown device: $STOCK_DEVICE"
         return 1
     fi
 
-
-    echo "Firmware downloading..."
-    aria2c -x 16 -d "$DOWN_DIR" -o "BASE_FW.tar.zst" --allow-overwrite=true --auto-file-renaming=false "$FW_URL" || return 1
+    # Check for cached firmware and rename it
+    if [ -f "$CACHE_FW" ]; then
+        echo "Using cached firmware: $CACHE_FW"
+        mv "$CACHE_FW" "$FW_FILE"
+        # Remove any other zip files in the folder
+        find "$DOWN_DIR" -maxdepth 1 -type f -name '*.zip' ! -name 'BASE_FW.zip' -exec rm -f {} +
+    else
+        echo "Firmware not found, downloading..."
+        wget -O "$FW_FILE" "$FW_URL" || return 1
+    fi
 
     echo "Downloading vendor for ${STOCK_DEVICE}"
-    aria2c -x 16 -d "$DOWN_DIR" -o "vendor.img" --allow-overwrite=true --auto-file-renaming=false "https://github.com/Lumi-ROM/Vendors/releases/download/${STOCK_DEVICE}_latest/vendor.img"
-    
-    # Cleanup any leftover .aria2 control files
-    find "$DOWN_DIR" -name "*.aria2" -exec rm -f {} +
+    wget -q "https://github.com/Lumi-ROM/Vendors/releases/download/${STOCK_DEVICE}_latest/vendor.img" -O "${DOWN_DIR}/vendor.img"
 }
 
 EXTRACT_FIRMWARE() {
@@ -91,21 +95,21 @@ EXTRACT_FIRMWARE() {
     fi
 
     local FIRM_DIR="$1"
-    local FIRM_FILE="$FIRM_DIR/BASE_FW.tar.zst"
+    local ZIP="$FIRM_DIR/BASE_FW.zip"
 
     echo "Extracting downloaded firmware."
 
-    if [ ! -f "$FIRM_FILE" ]; then
-        echo "Error: BASE_FW.tar.zst not found in $FIRM_DIR"
+    if [ ! -f "$ZIP" ]; then
+        echo "Error: BASE_FW.zip not found in $FIRM_DIR"
         return 1
     fi
 
-    tar --use-compress-program="zstd -d --long=29" -xf "$FIRM_FILE" -C "$FIRM_DIR" || {
+    7z x -y -bd -o"$FIRM_DIR" "$ZIP" || {
         echo "Extraction failed"
         return 1
     }
 
-    rm -f "$FIRM_FILE"
+    rm -f "$ZIP"
 }
 
 
