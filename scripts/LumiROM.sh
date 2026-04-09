@@ -66,7 +66,7 @@ DOWNLOAD_FIRMWARE() {
 
     elif [[ "$STOCK_DEVICE" == "SM-A225F" || "$STOCK_DEVICE" == "SM-A225M" || "$STOCK_DEVICE" == "SM-E225F" || "$STOCK_DEVICE" == "SM-M225F" || "$STOCK_DEVICE" == "SM-A226B" ]]; then
         FW_URL="https://h3cked.qzz.io/d/H3CKED_HDD/LumiROM/Base_FW/A245F.zip?sign=GpyvunbcV76xw7beb90jkAdYrmpaiUPNv_8uSf1LJ5Y=:0"
-        CACHE_FW="${DOWN_DIR}/A24.zip"
+        CACHE_FW="${DOWN_DIR}/A34.zip"
 
     else
         echo "Unknown device: $STOCK_DEVICE"
