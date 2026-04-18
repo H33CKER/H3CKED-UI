@@ -1,20 +1,20 @@
 #!/bin/bash
 
 IS_OFFICIAL() {
-    CURRENT_SIGNATURE=$(printf "%s" "$LUMIROM_BUILD" | sha256sum | cut -d ' ' -f 1)
+    CURRENT_SIGNATURE=$(printf "%s" "$H3CKED-UI_BUILD" | sha256sum | cut -d ' ' -f 1)
 
     if [ "$CURRENT_SIGNATURE" == "$OFFICIAL_HASH" ]; then
         export BUILD_STATUS="OFFICIAL"
-        export ROM_TAG="✨ LumiROM Official Build"
-        
+        export ROM_TAG="✨ H3CKED UI Official Build"
+
         echo "BUILD_STATUS=OFFICIAL" >> "$GITHUB_ENV"
-        echo "ROM_TAG=✨ LumiROM Official Build" >> "$GITHUB_ENV"
+        echo "ROM_TAG=✨ H3CKED UI Official Build" >> "$GITHUB_ENV"
     else
         export BUILD_STATUS="UNOFFICIAL"
-        export ROM_TAG="🛠️ LumiROM Unofficial Build"
+        export ROM_TAG="🛠️ H3CKED UI Unofficial Build"
         
         echo "BUILD_STATUS=UNOFFICIAL" >> "$GITHUB_ENV"
-        echo "ROM_TAG=🛠️ LumiROM Unofficial Build" >> "$GITHUB_ENV"
+        echo "ROM_TAG=🛠️ H3CKED UI Unofficial Build" >> "$GITHUB_ENV"
     fi
 
     echo "--- $ROM_TAG detected ---"
@@ -61,11 +61,11 @@ DOWNLOAD_FIRMWARE() {
 
     # Determine FW URL and cached filename based on stock device
     if [[ "$STOCK_DEVICE" == "SM-A325F" || "$STOCK_DEVICE" == "SM-A325M" || "$STOCK_DEVICE" == "SM-M325F" ]]; then
-        FW_URL="https://h3cked.qzz.io/d/H3CKED_HDD/LumiROM/Base_FW/A346B.zip?sign=nSPfUDaOWHgPp9J_w-sb56skCDdlDC6hZIB7tYekoC0=:0"
+        FW_URL="https://h3cked.qzz.io/d/H3CKED_HDD/H3CKED-UI/Base_FW/A346B.zip?sign=dEcmb1aVAD5SMPl4TUfd8d9so1sDhGHwU3NsboKbqjg=:0"
         CACHE_FW="${DOWN_DIR}/A34.zip"
 
     elif [[ "$STOCK_DEVICE" == "SM-A225F" || "$STOCK_DEVICE" == "SM-A225M" || "$STOCK_DEVICE" == "SM-E225F" || "$STOCK_DEVICE" == "SM-M225F" || "$STOCK_DEVICE" == "SM-A226B" ]]; then
-        FW_URL="https://h3cked.qzz.io/d/H3CKED_HDD/LumiROM/Base_FW/A245F.zip?sign=GpyvunbcV76xw7beb90jkAdYrmpaiUPNv_8uSf1LJ5Y=:0"
+        FW_URL="https://h3cked.qzz.io/d/H3CKED_HDD/H3CKED-UI/Base_FW/A245F.zip?sign=PgTm63F54o7XSlxoF3WYDdoDmClRopm1DlzJHJ1TpeU=:0"
         CACHE_FW="${DOWN_DIR}/A24.zip"
 
     else
@@ -85,7 +85,7 @@ DOWNLOAD_FIRMWARE() {
     fi
 
     echo "Downloading vendor for ${STOCK_DEVICE}"
-    wget -q "https://github.com/Lumi-ROM/Vendors/releases/download/${STOCK_DEVICE}_latest/vendor.img" -O "${DOWN_DIR}/vendor.img"
+    wget -q "https://github.com/H3CKED-UI/Vendors/releases/download/${STOCK_DEVICE}_latest/vendor.img" -O "${DOWN_DIR}/vendor.img"
 }
 
 EXTRACT_FIRMWARE() {
@@ -364,7 +364,7 @@ INSTALL_FRAMEWORK() {
     echo "Checking framework-res.apk integrity..."
     if ! unzip -t "$framework_res_apk" >/dev/null 2>&1; then
         echo "Warning: $framework_res_apk failed integrity check, using fallback from bin/framework-res.apk"
-        cp -f "$(pwd)/LumiROM/Mods/device_specific/framework-res/system/system/framework" "$framework_res_apk"
+        cp -f "$(pwd)/H3CKED-UI/Mods/device_specific/framework-res/system/system/framework" "$framework_res_apk"
     fi
 
     # Installing stock overlay
@@ -888,7 +888,7 @@ APPLY_STOCK_CONFIG() {
 
     # Fix unsupported BPF error for kernels lower than 5.10.
     if [ "$USE_UI_8_TETHERING_APEX" = "True" ]; then
-        cp -rfa "$(pwd)/LumiROM/Mods/device_specific/bpf_patch/." "$EXTRACTED_FIRM_DIR/"
+        cp -rfa "$(pwd)/H3CKED-UI/Mods/device_specific/bpf_patch/." "$EXTRACTED_FIRM_DIR/"
     fi
 
 	# Replace Stock Files.
@@ -1126,11 +1126,11 @@ APPLY_FEATURES() {
 
 }
 
-LUMI_BOMBS() {
-    OVERLAY="$(pwd)/LumiROM/Mods/overlays"
+APPLY_MODS() {
+    OVERLAY="$(pwd)/H3CKED-UI/Mods/overlays"
 
     if [ -d "$OVERLAY" ]; then
-        echo "Applying LumiBombs Mods..."
+        echo "Applying H3CKED-UI Mods..."
         echo "SOURCE ROOT: $OVERLAY"
         echo "TARGET ROOT: $(pwd)/FIRMWARE"
         echo "============================================"
@@ -1161,9 +1161,9 @@ LUMI_BOMBS() {
             echo "============================================"
         done
 
-        echo "All LumiBombs mods applied successfully"
+        echo "All H3CKED UI mods applied successfully"
     else
-        echo "No LumiBombs overlay found, skipping..."
+        echo "No H3CKED UI overlay found, skipping..."
     fi
 }
 
@@ -1206,7 +1206,7 @@ APPENDING_DISPLAY_ID() {
     # Add a name to build ID, doesnt delete the line, it adds at the end
 	local EXTRACTED_FIRM_DIR="$1"
 
-    APPEND_DISPLAY_ID "$1" "LumiROM $LUMIROM_VERSION $BUILD_STATUS Stable"
+    APPEND_DISPLAY_ID "$1" "H3CKED UI $H3CKED-UI_VERSION $BUILD_STATUS Stable"
 }
 
 GEN_FS_CONFIG() {
@@ -1321,7 +1321,7 @@ BUILD_IMG() {
     local EXTRACTED_FIRM_DIR="$1"
     local FILE_SYSTEM="$2"
 	local OUT_DIR="$3"
-    local DEVICE_CONFIG="$(pwd)/LumiROM/Devices/${STOCK_DEVICE}/config"
+    local DEVICE_CONFIG="$(pwd)/H3CKED-UI/Devices/${STOCK_DEVICE}/config"
     local OP_LIST="$(pwd)/template/dynamic_partitions_op_list"
 
     if [[ -f "$DEVICE_CONFIG" ]]; then

@@ -22,11 +22,11 @@ jobs:
 
           echo "Downloading A34 firmware..."
           wget -O FIRMWARE/A34.zip \
-          "https://h3cked.qzz.io/d/H3CKED_HDD/LumiROM/Base_FW/A346B.zip?sign=nSPfUDaOWHgPp9J_w-sb56skCDdlDC6hZIB7tYekoC0=:0"
+          "https://h3cked.qzz.io/d/H3CKED_HDD/H3CKED_UI/Base_FW/A346B.zip?sign=dEcmb1aVAD5SMPl4TUfd8d9so1sDhGHwU3NsboKbqjg=:0"
 
           echo "Downloading A24 firmware..."
           wget -O FIRMWARE/A24.zip \
-          "https://h3cked.qzz.io/d/H3CKED_HDD/LumiROM/Base_FW/A245F.zip?sign=GpyvunbcV76xw7beb90jkAdYrmpaiUPNv_8uSf1LJ5Y=:0"
+          "https://h3cked.qzz.io/d/H3CKED_HDD/H3CKED_UI/Base_FW/A245F.zip?sign=PgTm63F54o7XSlxoF3WYDdoDmClRopm1DlzJHJ1TpeU=:0"
 
       - name: Save cache
         uses: actions/cache/save@v4

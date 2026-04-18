@@ -49,7 +49,7 @@ UPDATE_ZIP_SCRIPT() {
       
         sed -i "s!^getprop(\"ro.boot.em.model\").*!$NEW_CHECK!" "$UPDATER_PATH"
 
-        sed -i "s!ui_print(\".*for .*\");!ui_print(\"   $LUMIROM_VERSION-$BUILD_DATE $BUILD_STATUS for $DISPLAY_NAME\");!" "$UPDATER_PATH"
+        sed -i "s!ui_print(\".*for .*\");!ui_print(\"   $H3CKED_UI_VERSION-$BUILD_DATE $BUILD_STATUS for $DISPLAY_NAME\");!" "$UPDATER_PATH"
 
 }
 
@@ -83,12 +83,12 @@ FLASHABLE_ZIP_CREATION() {
         echo "Generating build_info.txt..."
         {
             echo "device=$DEVICE_CODENAME"
-            echo "version=$LUMIROM_VERSION-$BUILD_DATE"
+            echo "version=$H3CKED_UI_VERSION-$BUILD_DATE"
             echo "timestamp=$TIMESTAMP"
             echo "status=$BUILD_STATUS"
         } > "$TEMPLATE_DIR/build_info.txt"
 
-        SPECIFIC_BOOT="$(pwd)/LumiROM/Devices/$DEVICE/boot.img"
+        SPECIFIC_BOOT="$(pwd)/H3CKED_UI/Devices/$DEVICE/boot.img"
 
         if [ -f "$SPECIFIC_BOOT" ]; then
             echo "-> Copying boot.img from $DEVICE..."
@@ -103,7 +103,7 @@ FLASHABLE_ZIP_CREATION() {
         cp TMP/*.transfer.list "$TEMPLATE_DIR"/ 2>/dev/null || true
 
         echo "Creating ZIP package..."
-        ZIP_FILE="LumiROM_${LUMIROM_VERSION}-${BUILD_DATE}_${DEVICE_CODENAME}.zip"
+        ZIP_FILE="H3CKED_UI_${H3CKED_UI_VERSION}-${BUILD_DATE}_${DEVICE_CODENAME}.zip"
         [ -f "$ZIP_FILE" ] && rm "$ZIP_FILE"
 
         # ZIP the rom

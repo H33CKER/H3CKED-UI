@@ -51,23 +51,23 @@ jobs:
         echo "STOCK_DEVICE=${{ github.event.inputs.STOCK_DEVICE }}" >> $GITHUB_ENV
         echo "USE_UI_8_TETHERING_APEX=${{ github.event.inputs.USE_UI_8_TETHERING_APEX }}" >> $GITHUB_ENV
         echo "OUTPUT_FILESYSTEM=erofs" >> $GITHUB_ENV
-        echo "LUMIROM_VERSION=8.6.1" >> $GITHUB_ENV
+        echo "H3CKED-UI_VERSION=8.6.1" >> $GITHUB_ENV
 
         echo "OUT_DIR=$PWD/OUT" >> $GITHUB_ENV
         echo "WORK_DIR=$PWD/WORK" >> $GITHUB_ENV
         echo "FIRM_DIR=$PWD/FIRMWARE" >> $GITHUB_ENV
-        echo "DEVICES_DIR=$PWD/LumiROM/Devices" >> $GITHUB_ENV
+        echo "DEVICES_DIR=$PWD/H3CKED-UI/Devices" >> $GITHUB_ENV
         echo "APKTOOL=$PWD/bin/apktool/apktool.jar" >> $GITHUB_ENV
-        echo "VNDKS_COLLECTION=$PWD/LumiROM/vndks" >> $GITHUB_ENV
+        echo "VNDKS_COLLECTION=$PWD/H3CKED-UI/vndks" >> $GITHUB_ENV
         echo "BUILD_PARTITIONS=product,vendor,odm,system_ext,system" >> $GITHUB_ENV
 
     - name: Check repo
       shell: bash
       env:
-        LUMIROM_BUILD: ${{ secrets.LUMIROM_BUILD }}
+        H3CKED-UI_BUILD: ${{ secrets.H3CKED-UI_BUILD }}
         OFFICIAL_HASH: ${{ secrets.OFFICIAL_HASH }}
       run: |
-        source scripts/LumiROM.sh
+        source scripts/H3CKED-UI.sh
         IS_OFFICIAL
 
     - name: Restore firmware cache
@@ -82,14 +82,14 @@ jobs:
     - name: Download firmware
       shell: bash
       run: |
-        source scripts/LumiROM.sh
+        source scripts/H3CKED-UI.sh
         source "$DEVICES_DIR/$STOCK_DEVICE/config"
         DOWNLOAD_FIRMWARE "$TARGET_DEVICE" "$FIRM_DIR"
 
     - name: Extract firmware
       shell: bash
       run: |
-        source scripts/LumiROM.sh
+        source scripts/H3CKED-UI.sh
         EXTRACT_FIRMWARE "FIRMWARE"
         PREPARE_PARTITIONS "FIRMWARE"
         EXTRACT_FIRMWARE_IMG "FIRMWARE"
@@ -97,7 +97,7 @@ jobs:
     - name: Apply vendor patches
       shell: bash
       run: |
-        source scripts/LumiROM.sh
+        source scripts/H3CKED-UI.sh
         DISABLE_FBE "FIRMWARE"
         DISABLE_FDE "FIRMWARE"
         DELETE_ICCC "FIRMWARE"
@@ -107,44 +107,44 @@ jobs:
     - name: Apply stock config
       shell: bash
       run: |
-        source scripts/LumiROM.sh
+        source scripts/H3CKED-UI.sh
         APPLY_STOCK_CONFIG "FIRMWARE"
 
     - name: Debloat ROM
       shell: bash
       run: |
-        source scripts/LumiROM.sh
+        source scripts/H3CKED-UI.sh
         DEBLOAT "FIRMWARE"
 
     - name: Apply features
       shell: bash
       run: |
-        source scripts/LumiROM.sh
+        source scripts/H3CKED-UI.sh
         APPLY_FEATURES "FIRMWARE"
 
-    - name: Apply LumiBombs
+    - name: Apply H3CKED-UI patches
       shell: bash
       run: |
-        source scripts/LumiROM.sh
-        LUMI_BOMBS "FIRMWARE"
+        source scripts/H3CKED-UI.sh
+        APPLY_MODS "FIRMWARE"
 
     - name: Update Build ID
       shell: bash
       run: |
-        source scripts/LumiROM.sh
+        source scripts/H3CKED-UI.sh
         APPENDING_DISPLAY_ID "FIRMWARE"
 
     - name: Install stock framework-res
       shell: bash
       run: |
-        source scripts/LumiROM.sh
+        source scripts/H3CKED-UI.sh
         INSTALL_FRAMEWORK \
           "FIRMWARE/system/system/framework/framework-res.apk"
 
     - name: Decompile framework jars
       shell: bash
       run: |
-        source scripts/LumiROM.sh
+        source scripts/H3CKED-UI.sh
         DECOMPILE "$APKTOOL" \
           "FIRMWARE/system/system/framework/ssrm.jar" "$WORK_DIR"
         DECOMPILE "$APKTOOL" \
@@ -164,7 +164,7 @@ jobs:
     - name: Recompile framework
       shell: bash
       run: |
-        source scripts/LumiROM.sh
+        source scripts/H3CKED-UI.sh
         RECOMPILE "$APKTOOL" "$WORK_DIR/ssrm" \
           "FIRMWARE/system/system/framework" "$WORK_DIR"
         RECOMPILE "$APKTOOL" "$WORK_DIR/services" \
@@ -175,7 +175,7 @@ jobs:
     - name: Build ROM
       shell: bash
       run: |
-        source scripts/LumiROM.sh
+        source scripts/H3CKED-UI.sh
         BUILD_IMG "FIRMWARE" "$OUTPUT_FILESYSTEM" "$OUT_DIR"
         IMG_TO_BROTLI "$OUT_DIR" "TMP"
 
